@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐍 Snake Game+ - Modes, Shop, Coins & Diamonds</title>
+    <style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #191919;
+    color: white;
+    overflow: hidden;
+}
+
+#gameContainer {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+#gameCanvas {
+    background: #191919;
+    border-right: 3px solid #FFD700;
+}
+
+#sidebar {
+    background: #232a3d;
+    border-right: 3px solid #FFD700;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+#sidebarContent {
+    color: white;
+}
+
+.sidebar-box {
+    background: #323242;
+    border: 2px solid #5a5a78;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 14px;
+}
+
+.sidebar-title {
+    color: #FFD700;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.emoji {
+    font-size: 24px;
+    text-align: center;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* UI Overlay Styles */
+#uiOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #191919;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+}
+
+.screen.hidden {
+    display: none;
+}
+
+.screen h1 {
+    color: #FFD700;
+    font-size: 48px;
+    margin-bottom: 40px;
+}
+
+/* Button Styles */
+.btn {
+    background: #3c4c5c;
+    border: 2px solid #646478;
+    border-radius: 10px;
+    color: #e6e6e6;
+    padding: 15px 30px;
+    margin: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    background: #4c6c8c;
+    border-color: #FFD700;
+}
+
+.btn.active {
+    background: #4678b4;
+    border-color: #FFD700;
+}
+
+.btn:disabled {
+    background: #323232;
+    color: #8c8c8c;
+    cursor: not-allowed;
+    border-color: #323232;
+}
+
+.back-btn {
+    background: #3c4c5c;
+    border: 2px solid #646478;
+    border-radius: 10px;
+    color: #e6e6e6;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.back-btn:hover {
+    background: #4c6c8c;
+    border-color: #FFD700;
+}
+
+/* Mode Selection */
+#modeButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+#actionButtons {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+#shopButtons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#highScores, #walletInfo {
+    text-align: center;
+    margin: 10px 0;
+    color: #00FFFF;
+}
+
+/* Shop Lists */
+.shop-item {
+    background: #3c4c5c;
+    border: 2px solid #646478;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 600px;
+}
+
+.shop-item:hover {
+    background: #4c6c8c;
+    border-color: #FFD700;
+}
+
+.shop-item.owned {
+    background: #4678b4;
+    border-color: #FFD700;
+}
+
+.shop-item.disabled {
+    background: #323232;
+    color: #8c8c8c;
+    cursor: not-allowed;
+    border-color: #323232;
+}
+
+.shop-cost {
+    font-size: 12px;
+    color: white;
+    margin-top: 8px;
+}
+
+/* Overlays */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+}
+
+.overlay.hidden {
+    display: none;
+}
+
+.overlay h1 {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.overlay h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    color: #FFD700;
+}
+
+.overlay p {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+#gameOverOverlay h1 {
+    color: #dc1414;
+}
+
+#pauseOverlay h1 {
+    color: #FFD700;
+}
+
+#newHighScore {
+    color: #FFD700;
+    font-weight: bold;
+}
+
+/* Settings */
+.settings-content {
+    text-align: center;
+}
+
+.settings-content label {
+    display: block;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+#volumeSlider {
+    width: 300px;
+    margin: 0 10px;
+}
+
+#volumeValue {
+    color: #FFD700;
+    font-weight: bold;
+}
+
+/* About */
+.about-content {
+    text-align: center;
+    max-width: 600px;
+}
+
+.about-content p {
+    margin: 20px 0;
+    font-size: 18px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #gameContainer {
+        flex-direction: column;
+    }
+    
+    #sidebar {
+        order: -1;
+        height: 200px;
+        padding: 10px;
+    }
+    
+    .screen h1 {
+        font-size: 32px;
+    }
+    
+    .shop-item {
+        width: 90%;
+    }
+}
+
+/* Particle effects */
+.particle {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+}
+
+/* Food and powerup animations */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.pulsing {
+    animation: pulse 1s infinite;
+}
+
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="sidebar">
+            <div id="sidebarContent"></div>
+        </div>
+    </div>
+    
+    <!-- UI Overlays -->
+    <div id="uiOverlay">
+        <!-- Mode Selection Screen -->
+        <div id="modeSelectScreen" class="screen">
+            <h1>Select Game Mode</h1>
+            <div id="modeButtons"></div>
+            <div id="highScores"></div>
+            <div id="walletInfo"></div>
+            <div id="actionButtons"></div>
+            <div id="shopButtons"></div>
+        </div>
+
+        <!-- Shop Screens -->
+        <div id="shopThemesScreen" class="screen hidden">
+            <h1>Themes</h1>
+            <div id="themesList"></div>
+            <button id="backFromThemes" class="back-btn">Back</button>
+        </div>
+
+        <div id="shopSkinsScreen" class="screen hidden">
+            <h1>Skins</h1>
+            <div id="skinsList"></div>
+            <button id="backFromSkins" class="back-btn">Back</button>
+        </div>
+
+        <div id="shopBoostsScreen" class="screen hidden">
+            <h1>Boost Power-ups</h1>
+            <div id="boostsList"></div>
+            <button id="backFromBoosts" class="back-btn">Back</button>
+        </div>
+
+        <!-- About Screen -->
+        <div id="aboutScreen" class="screen hidden">
+            <h1>About</h1>
+            <div class="about-content">
+                <p>Snake+ with Modes, Themes, Skins, Coins & Diamonds.</p>
+                <p>Collect coins and diamonds in-game.</p>
+                <p>Buy skins and themes, upgrade power-up durations.</p>
+                <p>High scores saved per mode.</p>
+            </div>
+            <button id="backFromAbout" class="back-btn">Back</button>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settingsScreen" class="screen hidden">
+            <h1>Settings</h1>
+            <div class="settings-content">
+                <label for="volumeSlider">Volume: <span id="volumeValue">70%</span></label>
+                <input type="range" id="volumeSlider" min="0" max="100" value="70">
+            </div>
+            <button id="backFromSettings" class="back-btn">Close</button>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div id="gameOverOverlay" class="overlay hidden">
+            <h1>GAME OVER</h1>
+            <p id="finalScore">Score: 0</p>
+            <p id="newHighScore" class="hidden">NEW HIGH SCORE!</p>
+            <p>Press SPACE to restart, Esc for Menu</p>
+        </div>
+
+        <!-- Pause Overlay -->
+        <div id="pauseOverlay" class="overlay hidden">
+            <h1>PAUSED</h1>
+        </div>
+
+        <!-- Audio Initialization Notice -->
+        <div id="audioNotice" class="overlay hidden">
+            <h2>🔊 Audio Ready!</h2>
+            <p>Click anywhere to enable sounds</p>
+        </div>
+    </div>
+
+    <script>
+    // Game Constants
+const DEFAULT_SCREEN_WIDTH = 1200;
+const DEFAULT_SCREEN_HEIGHT = 800;
+const SIDEBAR_WIDTH = 250;
+const MIN_SIDEBAR_WIDTH = 120;
+
+let SCREEN_WIDTH = DEFAULT_SCREEN_WIDTH;
+let SCREEN_HEIGHT = DEFAULT_SCREEN_HEIGHT;
+let PLAY_AREA_WIDTH = SCREEN_WIDTH - SIDEBAR_WIDTH;
+let PLAY_AREA_HEIGHT = SCREEN_HEIGHT;
+let CELL_SIZE = 30;
+let CELL_NUMBER_X = Math.floor(PLAY_AREA_WIDTH / CELL_SIZE);
+let CELL_NUMBER_Y = Math.floor(PLAY_AREA_HEIGHT / CELL_SIZE);
+
+// Colors
+const COLORS = {
+    BLACK: '#000000',
+    WHITE: '#ffffff',
+    DARK_GREEN: '#228b22',
+    LIGHT_GREEN: '#32cd32',
+    RED: '#dc1414',
+    GOLD: '#ffd700',
+    PURPLE: '#8a2be2',
+    ORANGE: '#ffa500',
+    PINK: '#ff1493',
+    CYAN: '#00ffff',
+    SHADOW: '#0f0f0f',
+    BACKGROUND: '#191919',
+    SIDEBAR_BG: '#232a3d',
+    SIDEBAR_ACCENT: '#323242',
+    GRID_COLOR: '#282828',
+    BLUE: '#1e8cff',
+    LIME: '#32ff32'
+};
+
+// Snake colors (will be overridden by selected skin)
+let SNAKE_COLORS = {
+    HEAD: '#46be73',
+    BODY: '#3aaa69',
+    BELLY: '#d2e1cd',
+    OUTLINE: '#144632',
+    TONGUE: '#dc282d',
+    EYE_WHITE: '#f5f5f5',
+    EYE_BLACK: '#1e1e1e'
+};
+
+// Grid colors (overridden by theme)
+let GRID_COLORS = {
+    A: '#1e2226',
+    B: '#1a1e22'
+};
+
+// Game Data
+const GAME_MODES = {
+    easy: { speed_ms: 150, label: "Easy" },
+    medium: { speed_ms: 110, label: "Medium" },
+    hard: { speed_ms: 80, label: "Hard" }
+};
+
+const THEMES = [
+    { name: "Classic", bg: "#191919", gridA: "#1e2226", gridB: "#1a1e22", cost: { coins: 0, diamonds: 0 }, available: true },
+    { name: "Forest", bg: "#141a16", gridA: "#18221c", gridB: "#121a14", cost: { coins: 50, diamonds: 0 }, available: true },
+    { name: "Neon", bg: "#080812", gridA: "#14143c", gridB: "#0e0e2c", cost: { coins: 60, diamonds: 2 }, available: true },
+    { name: "Desert", bg: "#201c14", gridA: "#2c261e", gridB: "#242018", cost: { coins: 70, diamonds: 5 }, available: true },
+    { name: "Glacier", bg: "#0f1a24", gridA: "#162634", gridB: "#122230", cost: { coins: 100, diamonds: 10 }, available: true },
+    { name: "Cosmic", bg: "#06060a", gridA: "#140e2c", gridB: "#0a0a14", cost: { coins: 0, diamonds: 0 }, available: false }
+];
+
+const SKINS = [
+    { name: "Default", head: "#46be73", body: "#3aaa69", belly: "#d2e1cd", outline: "#144632", cost: { coins: 0 }, available: true },
+    { name: "Ruby", head: "#c83c3c", body: "#b43232", belly: "#f0d2d2", outline: "#461414", cost: { coins: 50 }, available: true },
+    { name: "Cobalt", head: "#3c78dc", body: "#3264c8", belly: "#d2dcf0", outline: "#141e46", cost: { coins: 50 }, available: true },
+    { name: "Viper", head: "#78dc3c", body: "#64c832", belly: "#d2f0d2", outline: "#144614", cost: { coins: 50 }, available: true },
+    { name: "Obsidian", head: "#282832", body: "#1e1e28", belly: "#bebec8", outline: "#0c0c14", cost: { coins: 0 }, available: false }
+];
+
+const BOOST_LEVELS = [
+    { add_sec: 0, cost_coins: 0 },
+    { add_sec: 2, cost_coins: 10 },
+    { add_sec: 2, cost_coins: 25 },
+    { add_sec: 2, cost_coins: 40 },
+    { add_sec: 2, cost_coins: 50 },
+    { add_sec: 4, cost_coins: 80 }
+];
+
+const COLLECTIBLE_TYPES = {
+    coin: { emoji: "🪙", color: "#f0c828", weight: 12 },
+    diamond: { emoji: "💎", color: "#8cdcff", weight: 2 }
+};
+
+const FOOD_TYPES = {
+    apple: { color: "#dc1414", points: 10, emoji: "🍎", weight: 40 },
+    banana: { color: "#ffff00", points: 15, emoji: "🍌", weight: 25 },
+    cherry: { color: "#8b0000", points: 20, emoji: "🍒", weight: 20 },
+    grape: { color: "#8a2be2", points: 25, emoji: "🍇", weight: 15 },
+    orange: { color: "#ffa500", points: 12, emoji: "🍊", weight: 30 },
+    strawberry: { color: "#ff1493", points: 18, emoji: "🍓", weight: 25 },
+    watermelon: { color: "#32cd32", points: 30, emoji: "🍉", weight: 10 },
+    pineapple: { color: "#ffd700", points: 35, emoji: "🍍", weight: 8 }
+};
+
+const POWERUP_TYPES = {
+    speed_boost: { color: "#00ffff", duration: 5000, emoji: "⚡", description: "Speed Boost", weight: 10 },
+    invincible: { color: "#ffd700", duration: 3000, emoji: "🛡️", description: "Invincible", weight: 5 },
+    double_points: { color: "#8a2be2", duration: 8000, emoji: "💎", description: "Double Points", weight: 8 },
+    ghost_mode: { color: "#c8c8c8", duration: 4000, emoji: "👻", description: "Ghost Mode", weight: 6 },
+    shrink: { color: "#1e8cff", duration: 6000, emoji: "🔵", description: "Shrink Snake", weight: 7 },
+    magnet: { color: "#ff4500", duration: 7000, emoji: "🧲", description: "Food Magnet", weight: 9 }
+};
+
+// Game Classes
+class Vector2 {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    equals(other) {
+        return this.x === other.x && this.y === other.y;
+    }
+
+    copy() {
+        return new Vector2(this.x, this.y);
+    }
+}
+
+class SnakeSegment {
+    constructor(pos, isHead = false) {
+        this.pos = new Vector2(pos.x, pos.y);
+        this.isHead = isHead;
+        this.pulse = 0;
+    }
+}
+
+class Snake {
+    constructor() {
+        const startX = Math.max(3, Math.floor(CELL_NUMBER_X / 4));
+        const startY = Math.max(2, Math.floor(CELL_NUMBER_Y / 2));
+        
+        this.segments = [
+            new SnakeSegment(new Vector2(startX, startY), true),
+            new SnakeSegment(new Vector2(startX - 1, startY)),
+            new SnakeSegment(new Vector2(startX - 2, startY))
+        ];
+        
+        this.direction = new Vector2(1, 0);
+        this.newBlock = false;
+        this.growAnimation = 0;
+    }
+
+    moveSnake() {
+        const head = this.segments[0];
+        const newHeadPos = new Vector2(head.pos.x + this.direction.x, head.pos.y + this.direction.y);
+
+        if (this.newBlock) {
+            head.isHead = false;
+            const newHead = new SnakeSegment(newHeadPos, true);
+            this.segments.unshift(newHead);
+            this.newBlock = false;
+            this.growAnimation = 10;
+        } else {
+            for (let i = this.segments.length - 1; i > 0; i--) {
+                this.segments[i].pos = this.segments[i - 1].pos.copy();
+            }
+            this.segments[0].pos = newHeadPos;
+        }
+
+        if (this.growAnimation > 0) {
+            this.growAnimation--;
+        }
+    }
+
+    addBlock() {
+        this.newBlock = true;
+    }
+
+    shrink(amount = 2) {
+        if (this.segments.length > 3) {
+            for (let i = 0; i < Math.min(amount, this.segments.length - 3); i++) {
+                this.segments.pop();
+            }
+        }
+    }
+
+    checkCollision(ghostMode = false) {
+        const head = this.segments[0].pos;
+
+        if (!ghostMode) {
+            if (head.x < 0 || head.x >= CELL_NUMBER_X || head.y < 0 || head.y >= CELL_NUMBER_Y) {
+                return true;
+            }
+        }
+
+        for (let i = 1; i < this.segments.length; i++) {
+            if (this.segments[i].pos.equals(head)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+class Food {
+    constructor(foodType = "apple") {
+        this.foodType = foodType;
+        this.properties = FOOD_TYPES[foodType];
+        this.randomize();
+        this.pulse = 0;
+        this.sparkles = [];
+    }
+
+    randomize() {
+        this.x = Math.floor(Math.random() * CELL_NUMBER_X);
+        this.y = Math.floor(Math.random() * CELL_NUMBER_Y);
+        this.pos = new Vector2(this.x, this.y);
+        this.sparkles = [];
+    }
+}
+
+class PowerUp {
+    constructor(powerupType) {
+        this.powerupType = powerupType;
+        this.properties = POWERUP_TYPES[powerupType];
+        this.randomize();
+        this.pulse = 0;
+        this.rotation = 0;
+        this.spawnTime = Date.now();
+        this.lifetime = 15000;
+    }
+
+    randomize() {
+        this.x = Math.floor(Math.random() * CELL_NUMBER_X);
+        this.y = Math.floor(Math.random() * CELL_NUMBER_Y);
+        this.pos = new Vector2(this.x, this.y);
+    }
+
+    isExpired() {
+        return Date.now() - this.spawnTime > this.lifetime;
+    }
+}
+
+class ParticleEffect {
+    constructor(x, y, color, count = 10, effectType = 'explosion') {
+        this.particles = [];
+        this.effectType = effectType;
+
+        for (let i = 0; i < count; i++) {
+            this.particles.push({
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 10,
+                vy: (Math.random() - 0.5) * 10,
+                life: 24,
+                color: color,
+                size: Math.floor(Math.random() * 4) + 2
+            });
+        }
+    }
+
+    updateAndDraw(ctx) {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const particle = this.particles[i];
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+            particle.vy += 0.1;
+            particle.life--;
+
+            if (particle.life > 0) {
+                const alpha = Math.max(0, Math.min(1, particle.life / 22.0));
+                const size = Math.max(1, Math.floor(particle.size * alpha));
+                
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = particle.color;
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            } else {
+                this.particles.splice(i, 1);
+            }
+        }
+
+        return this.particles.length > 0;
+    }
+}
+
+// Storage helpers
+function loadFromStorage(key, defaultValue) {
+    try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : defaultValue;
+    } catch {
+        return defaultValue;
+    }
+}
+
+function saveToStorage(key, value) {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+        // Handle storage errors silently
+    }
+}
+
+// Game class with Improved Audio Implementation
+class Game {
+    constructor() {
+        this.canvas = document.getElementById('gameCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.setupCanvas();
+        
+        // Load persistent data
+        this.settings = loadFromStorage('settings', { volume: 0.7 });
+        this.volume = this.settings.volume;
+        this.highscores = loadFromStorage('highscores', { easy: 0, medium: 0, hard: 0 });
+        this.wallet = loadFromStorage('wallet', { coins: 0, diamonds: 0 });
+        this.shop = loadFromStorage('shop', this.defaultShop());
+
+        // Initialize Improved Audio System
+        this.audioContext = null;
+        this.sounds = {};
+        this.audioInitialized = false;
+        this.initializeAudio();
+
+        // UI State
+        this.uiState = "mode_select";
+        this.selectedMode = null;
+        this.currentMode = null;
+
+        // Theme/skin from shop
+        this.themeIndex = this.shop.themes?.selected || 0;
+        this.skinIndex = this.shop.skins?.selected || 0;
+        this.applyTheme();
+        this.applySkin();
+
+        // Game state
+        this.snake = new Snake();
+        this.foods = [];
+        this.powerups = [];
+        this.collectibles = [];
+        this.score = 0;
+        this.activePowerups = {};
+        this.powerupEndTimes = {};
+        this.particleEffects = [];
+        this.gameOverScreen = false;
+        this.paused = false;
+        this.started = false;
+
+        this.spawnFood();
+        this.lastFoodSpawn = Date.now();
+        this.lastPowerupSpawn = Date.now();
+        this.lastCollectibleSpawn = Date.now();
+
+        // Input handling
+        this.setupEventListeners();
+        this.setupUI();
+
+        // Game loop
+        this.lastUpdateTime = Date.now();
+        this.gameSpeed = 150;
+        this.gameLoop();
+
+        // Update UI
+        this.updateUI();
+
+        // Start menu music after a delay
+        setTimeout(() => this.playSound('menu_music'), 1000);
+    }
+
+    // ===== IMPROVED AUDIO SYSTEM =====
+    initializeAudio() {
+        // Audio files mapping (same as Python version)
+        const soundFiles = {
+            eat: 'sounds/eat.wav',
+            powerup: 'sounds/powerup.wav',
+            coin: 'sounds/coin.wav',
+            diamond: 'sounds/diamond.wav',
+            game_over: 'sounds/game_over.wav',
+            menu_select: 'sounds/menu_select.wav',
+            start: 'sounds/start.wav',
+            level_up: 'sounds/level_up.wav',
+            shrink: 'sounds/shrink.wav',
+            speed_boost: 'sounds/speed_boost.wav',
+            invincible: 'sounds/invincible.wav',
+            ghost_mode: 'sounds/ghost_mode.wav',
+            double_points: 'sounds/double_points.wav',
+            magnet: 'sounds/magnet.wav',
+            background: 'sounds/background.mp3',
+            menu_music: 'sounds/menu_music.mp3'
+        };
+
+        // Load all audio files with better error handling
+        Object.entries(soundFiles).forEach(([key, path]) => {
+            this.sounds[key] = new Audio();
+            this.sounds[key].src = path;
+            this.sounds[key].volume = this.volume;
+            
+            // Set loop for background music
+            if (key === 'background' || key === 'menu_music') {
+                this.sounds[key].loop = true;
+            }
+            
+            // Preload audio
+            this.sounds[key].preload = 'auto';
+            
+            // Add load event listener
+            this.sounds[key].addEventListener('canplaythrough', () => {
+                console.log(`✅ Loaded sound: ${key}`);
+            });
+            
+            // Handle loading errors gracefully
+            this.sounds[key].addEventListener('error', (e) => {
+                console.warn(`❌ Could not load sound: ${path}`, e);
+            });
+            
+            // Load the audio file
+            this.sounds[key].load();
+        });
+
+        // Initialize audio context on first user interaction
+        this.initializeAudioOnUserInteraction();
+    }
+
+    playSound(soundName, volume = null) {
+        if (!this.sounds[soundName]) {
+            console.warn(`Sound not found: ${soundName}`);
+            return;
+        }
+        
+        if (this.volume === 0) return;
+        
+        try {
+            const sound = this.sounds[soundName];
+            
+            // Reset audio to beginning
+            sound.currentTime = 0;
+            sound.volume = volume !== null ? volume : this.volume;
+            
+            // Create a promise-based play with better error handling
+            const playPromise = sound.play();
+            
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log(`🔊 Playing: ${soundName}`);
+                    })
+                    .catch(error => {
+                        console.warn(`❌ Failed to play sound ${soundName}:`, error);
+                        
+                        // If audio context isn't initialized, try to initialize it
+                        if (!this.audioInitialized && error.name === 'NotAllowedError') {
+                            this.showAudioNotice();
+                        }
+                    });
+            }
+        } catch (error) {
+            console.error(`Error playing sound ${soundName}:`, error);
+        }
+    }
+
+    initializeAudioOnUserInteraction() {
+        if (this.audioInitialized) return;
+        
+        const initAudio = async () => {
+            try {
+                // Create audio context if needed
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                // Resume audio context if suspended
+                if (this.audioContext.state === 'suspended') {
+                    await this.audioContext.resume();
+                }
+                
+                // Try to play and immediately pause each sound to "unlock" them
+                const unlockPromises = Object.entries(this.sounds).map(async ([key, sound]) => {
+                    try {
+                        sound.volume = 0.01; // Very low volume for initialization
+                        await sound.play();
+                        sound.pause();
+                        sound.currentTime = 0;
+                        sound.volume = this.volume; // Restore original volume
+                        console.log(`🔓 Unlocked sound: ${key}`);
+                    } catch (e) {
+                        console.warn(`Failed to unlock sound: ${key}`, e);
+                    }
+                });
+                
+                await Promise.all(unlockPromises);
+                
+                this.audioInitialized = true;
+                this.hideAudioNotice();
+                
+                // Play a test sound to confirm audio is working
+                setTimeout(() => {
+                    this.playSound('menu_select', 0.3);
+                }, 500);
+                
+                // Remove event listeners
+                document.removeEventListener('click', initAudio);
+                document.removeEventListener('keydown', initAudio);
+                document.removeEventListener('touchstart', initAudio);
+                
+                console.log('🎵 Audio system initialized successfully!');
+                
+            } catch (error) {
+                console.error('Failed to initialize audio system:', error);
+            }
+        };
+        
+        // Show audio notice
+        this.showAudioNotice();
+        
+        // Add event listeners for user interaction
+        document.addEventListener('click', initAudio, { once: true });
+        document.addEventListener('keydown', initAudio, { once: true });
+        document.addEventListener('touchstart', initAudio, { once: true });
+    }
+
+    showAudioNotice() {
+        const notice = document.getElementById('audioNotice');
+        if (notice) {
+            notice.classList.remove('hidden');
+        }
+    }
+
+    hideAudioNotice() {
+        const notice = document.getElementById('audioNotice');
+        if (notice) {
+            notice.classList.add('hidden');
+        }
+    }
+
+    stopSound(soundName) {
+        if (this.sounds[soundName]) {
+            this.sounds[soundName].pause();
+            this.sounds[soundName].currentTime = 0;
+        }
+    }
+
+    stopAllSounds() {
+        Object.values(this.sounds).forEach(sound => {
+            sound.pause();
+            sound.currentTime = 0;
+        });
+    }
+
+    updateSoundVolumes() {
+        Object.values(this.sounds).forEach(sound => {
+            sound.volume = this.volume;
+        });
+    }
+
+    // Debug method for testing sounds
+    testAllSounds() {
+        console.log('🎵 Testing all sounds...');
+        const soundNames = Object.keys(this.sounds);
+        
+        soundNames.forEach((soundName, index) => {
+            setTimeout(() => {
+                console.log(`Testing: ${soundName}`);
+                this.playSound(soundName, 0.5);
+            }, index * 1000); // Play each sound 1 second apart
+        });
+    }
+
+    playBeep() {
+        if (!this.audioContext) return;
+        
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+        
+        oscillator.frequency.value = 800;
+        gainNode.gain.value = this.volume * 0.1;
+        
+        oscillator.start();
+        oscillator.stop(this.audioContext.currentTime + 0.1);
+    }
+
+    // ===== GAME SETUP =====
+    setupCanvas() {
+        this.canvas.width = PLAY_AREA_WIDTH;
+        this.canvas.height = PLAY_AREA_HEIGHT;
+        
+        // Update sidebar width
+        const sidebar = document.getElementById('sidebar');
+        sidebar.style.width = SIDEBAR_WIDTH + 'px';
+    }
+
+    defaultShop() {
+        return {
+            skins: {
+                owned: [0],
+                selected: 0
+            },
+            themes: {
+                owned: [0],
+                selected: 0
+            },
+            boost_levels: {}
+        };
+    }
+
+    applyTheme() {
+        const theme = THEMES[this.themeIndex];
+        COLORS.BACKGROUND = theme.bg;
+        GRID_COLORS.A = theme.gridA;
+        GRID_COLORS.B = theme.gridB;
+        
+        // Update canvas background
+        this.canvas.style.background = theme.bg;
+    }
+
+    applySkin() {
+        const skin = SKINS[this.skinIndex];
+        SNAKE_COLORS.HEAD = skin.head;
+        SNAKE_COLORS.BODY = skin.body;
+        SNAKE_COLORS.BELLY = skin.belly;
+        SNAKE_COLORS.OUTLINE = skin.outline;
+    }
+
+    setupEventListeners() {
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => this.handleKeyDown(e));
+        
+        // Mouse controls for mobile/touch
+        this.canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.handleCanvasClick(e.touches[0]);
+        });
+    }
+
+    setupUI() {
+        this.setupModeSelectUI();
+        this.setupShopUI();
+        this.setupSettingsUI();
+    }
+
+    setupModeSelectUI() {
+        const modeButtons = document.getElementById('modeButtons');
+        modeButtons.innerHTML = '';
+
+        Object.entries(GAME_MODES).forEach(([mode, data]) => {
+            const button = document.createElement('button');
+            button.className = 'btn';
+            button.textContent = data.label;
+            button.onclick = () => this.selectMode(mode);
+            modeButtons.appendChild(button);
+        });
+
+        // Action buttons
+        const actionButtons = document.getElementById('actionButtons');
+        actionButtons.innerHTML = `
+            <button id="startGame" class="btn" disabled>Start Game</button>
+            <button id="exitGame" class="btn">Back/Exit</button>
+        `;
+
+        document.getElementById('startGame').onclick = () => this.startGame();
+        document.getElementById('exitGame').onclick = () => this.exitGame();
+
+        // Shop buttons
+        const shopButtons = document.getElementById('shopButtons');
+        shopButtons.innerHTML = `
+            <button class="btn" onclick="game.showScreen('shop_themes')">Themes</button>
+            <button class="btn" onclick="game.showScreen('shop_skins')">Skins</button>
+            <button class="btn" onclick="game.showScreen('shop_boosts')">Boosts</button>
+            <button class="btn" onclick="game.showScreen('settings')">Settings</button>
+            <button class="btn" onclick="game.showScreen('about')">About</button>
+        `;
+    }
+
+    setupShopUI() {
+        // Themes
+        const themesList = document.getElementById('themesList');
+        themesList.innerHTML = '';
+        
+        THEMES.forEach((theme, index) => {
+            const item = document.createElement('div');
+            item.className = 'shop-item';
+            
+            const owned = this.shop.themes?.owned?.includes(index);
+            const selected = this.themeIndex === index;
+            
+            if (owned && selected) item.classList.add('owned');
+            if (!theme.available) item.classList.add('disabled');
+            
+            let label = theme.name;
+            if (owned) label += ' (Owned)';
+            if (!theme.available) label += ' (Available soon)';
+            
+            item.innerHTML = `
+                <div>${label}</div>
+                ${!owned && theme.available ? `<div class="shop-cost">Cost: ${theme.cost.coins} coins, ${theme.cost.diamonds} diamonds</div>` : ''}
+            `;
+            
+            if (theme.available) {
+                item.onclick = () => this.buyOrSelectTheme(index);
+            }
+            
+            themesList.appendChild(item);
+        });
+
+        // Skins
+        const skinsList = document.getElementById('skinsList');
+        skinsList.innerHTML = '';
+        
+        SKINS.forEach((skin, index) => {
+            const item = document.createElement('div');
+            item.className = 'shop-item';
+            
+            const owned = this.shop.skins?.owned?.includes(index);
+            const selected = this.skinIndex === index;
+            
+            if (owned && selected) item.classList.add('owned');
+            if (!skin.available) item.classList.add('disabled');
+            
+            let label = skin.name;
+            if (owned) label += ' (Owned)';
+            if (!skin.available) label += ' (Available soon)';
+            
+            item.innerHTML = `
+                <div>${label}</div>
+                ${!owned && skin.available ? `<div class="shop-cost">Cost: ${skin.cost.coins} coins</div>` : ''}
+            `;
+            
+            if (skin.available) {
+                item.onclick = () => this.buyOrSelectSkin(index);
+            }
+            
+            skinsList.appendChild(item);
+        });
+
+        // Boosts
+        const boostsList = document.getElementById('boostsList');
+        boostsList.innerHTML = '';
+        
+        Object.entries(POWERUP_TYPES).forEach(([type, props]) => {
+            const level = this.shop.boost_levels?.[type] || 0;
+            const nextLevel = Math.min(level + 1, 5);
+            const duration = this.upgradedDuration(props.duration, type);
+            
+            const item = document.createElement('div');
+            item.className = 'shop-item';
+            
+            if (level >= 5) item.classList.add('disabled');
+            
+            item.innerHTML = `
+                <div>${props.description} Level ${level}/5 Duration: ${Math.floor(duration / 1000)}s</div>
+                ${level < 5 ? `<div class="shop-cost">Upgrade → Level ${nextLevel}: Cost ${BOOST_LEVELS[nextLevel].cost_coins} coins</div>` : ''}
+            `;
+            
+            if (level < 5) {
+                item.onclick = () => this.upgradeBoost(type);
+            }
+            
+            boostsList.appendChild(item);
+        });
+
+        // Back buttons
+        document.getElementById('backFromThemes').onclick = () => this.showScreen('mode_select');
+        document.getElementById('backFromSkins').onclick = () => this.showScreen('mode_select');
+        document.getElementById('backFromBoosts').onclick = () => this.showScreen('mode_select');
+        document.getElementById('backFromAbout').onclick = () => this.showScreen('mode_select');
+    }
+
+    setupSettingsUI() {
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValue = document.getElementById('volumeValue');
+        
+        volumeSlider.value = this.volume * 100;
+        volumeValue.textContent = Math.floor(this.volume * 100) + '%';
+        
+        volumeSlider.oninput = (e) => {
+            this.volume = e.target.value / 100;
+            volumeValue.textContent = e.target.value + '%';
+            this.settings.volume = this.volume;
+            
+            // Update all sound volumes
+            this.updateSoundVolumes();
+            
+            // Play a test sound to confirm volume change
+            if (this.audioInitialized) {
+                this.playSound('menu_select', this.volume);
+            }
+            
+            saveToStorage('settings', this.settings);
+        };
+        
+        document.getElementById('backFromSettings').onclick = () => this.showScreen('mode_select');
+    }
+
+    // ===== GAME FLOW =====
+    selectMode(mode) {
+        this.playSound('menu_select');
+        this.selectedMode = mode;
+        this.updateModeSelectButtons();
+        document.getElementById('startGame').disabled = false;
+    }
+
+    updateModeSelectButtons() {
+        const buttons = document.querySelectorAll('#modeButtons .btn');
+        buttons.forEach((btn, index) => {
+            const modes = Object.keys(GAME_MODES);
+            btn.classList.toggle('active', modes[index] === this.selectedMode);
+        });
+    }
+
+    startGame() {
+        if (!this.selectedMode) return;
+        
+        this.playSound('start');
+        this.stopSound('menu_music');
+        
+        this.restartGameWithMode(this.selectedMode);
+        this.showScreen('game');
+        
+        // Start background music after a short delay
+        setTimeout(() => {
+            this.playSound('background');
+        }, 500);
+    }
+
+    exitGame() {
+        this.playSound('menu_select');
+        // In a real application, you might close the window or redirect
+        console.log('Exit game');
+    }
+
+    showScreen(screenName) {
+        // Hide all screens
+        document.querySelectorAll('.screen').forEach(screen => {
+            screen.classList.add('hidden');
+        });
+        
+        // Hide overlays
+        document.querySelectorAll('.overlay').forEach(overlay => {
+            overlay.classList.add('hidden');
+        });
+
+        this.uiState = screenName;
+
+        if (screenName === 'game') {
+            // Show canvas and sidebar
+            document.getElementById('gameContainer').style.display = 'flex';
+        } else {
+            // Hide canvas and sidebar for menu screens
+            if (screenName !== 'settings') { // Keep canvas visible for settings overlay
+                document.getElementById('gameContainer').style.display = screenName === 'mode_select' ? 'flex' : 'none';
+            }
+            
+            // Show appropriate screen
+            const screenMap = {
+                'mode_select': 'modeSelectScreen',
+                'shop_themes': 'shopThemesScreen',
+                'shop_skins': 'shopSkinsScreen',
+                'shop_boosts': 'shopBoostsScreen',
+                'about': 'aboutScreen',
+                'settings': 'settingsScreen'
+            };
+            
+            const screenElement = document.getElementById(screenMap[screenName]);
+            if (screenElement) {
+                screenElement.classList.remove('hidden');
+            }
+        }
+
+        // Handle audio for screen changes
+        if (screenName === 'mode_select') {
+            this.stopSound('background');
+            this.playSound('menu_music');
+        } else if (screenName === 'game') {
+            this.stopSound('menu_music');
+        }
+
+        this.updateUI();
+    }
+
+    buyOrSelectTheme(index) {
+        const theme = THEMES[index];
+        const owned = this.shop.themes?.owned?.includes(index);
+        
+        if (owned) {
+            this.playSound('menu_select');
+            // Select theme
+            this.shop.themes.selected = index;
+            this.themeIndex = index;
+            this.applyTheme();
+            saveToStorage('shop', this.shop);
+        } else if (theme.available) {
+            // Buy theme
+            if (this.wallet.coins >= theme.cost.coins && this.wallet.diamonds >= theme.cost.diamonds) {
+                this.playSound('start');
+                this.wallet.coins -= theme.cost.coins;
+                this.wallet.diamonds -= theme.cost.diamonds;
+                this.shop.themes.owned.push(index);
+                this.shop.themes.selected = index;
+                this.themeIndex = index;
+                this.applyTheme();
+                saveToStorage('wallet', this.wallet);
+                saveToStorage('shop', this.shop);
+            } else {
+                this.playSound('menu_select');
+            }
+        }
+        
+        this.setupShopUI();
+        this.updateUI();
+    }
+
+    buyOrSelectSkin(index) {
+        const skin = SKINS[index];
+        const owned = this.shop.skins?.owned?.includes(index);
+        
+        if (owned) {
+            this.playSound('menu_select');
+            // Select skin
+            this.shop.skins.selected = index;
+            this.skinIndex = index;
+            this.applySkin();
+            saveToStorage('shop', this.shop);
+        } else if (skin.available) {
+            // Buy skin
+            if (this.wallet.coins >= skin.cost.coins) {
+                this.playSound('start');
+                this.wallet.coins -= skin.cost.coins;
+                this.shop.skins.owned.push(index);
+                this.shop.skins.selected = index;
+                this.skinIndex = index;
+                this.applySkin();
+                saveToStorage('wallet', this.wallet);
+                saveToStorage('shop', this.shop);
+            } else {
+                this.playSound('menu_select');
+            }
+        }
+        
+        this.setupShopUI();
+        this.updateUI();
+    }
+
+    upgradeBoost(type) {
+        const level = this.shop.boost_levels?.[type] || 0;
+        if (level >= 5) return;
+        
+        const cost = BOOST_LEVELS[level + 1].cost_coins;
+        if (this.wallet.coins >= cost) {
+            this.playSound('start');
+            this.wallet.coins -= cost;
+            if (!this.shop.boost_levels) this.shop.boost_levels = {};
+            this.shop.boost_levels[type] = level + 1;
+            saveToStorage('wallet', this.wallet);
+            saveToStorage('shop', this.shop);
+        } else {
+            this.playSound('menu_select');
+        }
+        
+        this.setupShopUI();
+        this.updateUI();
+    }
+
+    upgradedDuration(baseDuration, type) {
+        const level = this.shop.boost_levels?.[type] || 0;
+        let addSec = 0;
+        
+        for (let i = 1; i <= Math.min(level, 5); i++) {
+            addSec += BOOST_LEVELS[i].add_sec;
+        }
+        
+        return baseDuration + addSec * 1000;
+    }
+
+    updateUI() {
+        // Update high scores display
+        const highScoresElement = document.getElementById('highScores');
+        if (highScoresElement) {
+            highScoresElement.textContent = `Best - Easy: ${this.highscores.easy} Medium: ${this.highscores.medium} Hard: ${this.highscores.hard}`;
+        }
+
+        // Update wallet display
+        const walletElement = document.getElementById('walletInfo');
+        if (walletElement) {
+            walletElement.textContent = `Coins: ${this.wallet.coins} Diamonds: ${this.wallet.diamonds}`;
+        }
+
+        // Update sidebar
+        this.updateSidebar();
+    }
+
+    updateSidebar() {
+        const sidebarContent = document.getElementById('sidebarContent');
+        const bestScore = this.currentMode ? (this.highscores[this.currentMode] || 0) : 0;
+        const modeText = this.started ? this.currentMode : (this.selectedMode || '-');
+        
+        sidebarContent.innerHTML = `
+            <div class="sidebar-title">SNAKE+</div>
+            <div class="emoji">🐍</div>
+            
+            <div class="sidebar-box">
+                <div>Score: ${this.score}</div>
+                <div>Length: ${this.snake.segments.length}</div>
+                <div>Best: ${bestScore}</div>
+                <div>Coins: ${this.wallet.coins} Diamonds: ${this.wallet.diamonds}</div>
+                <div style="font-size: 12px;">Mode: ${modeText}</div>
+                <div style="font-size: 12px;">Theme: ${THEMES[this.themeIndex].name}</div>
+                <div style="font-size: 12px;">Skin: ${SKINS[this.skinIndex].name}</div>
+            </div>
+
+            <div class="sidebar-box">
+                <div style="margin-bottom: 8px;">Foods:</div>
+                ${Object.entries(FOOD_TYPES).map(([name, props]) => 
+                    `<div>${props.emoji} +${props.points}</div>`
+                ).join('')}
+            </div>
+
+            <div class="sidebar-box">
+                <div style="margin-bottom: 8px;">Power-ups:</div>
+                ${Object.entries(POWERUP_TYPES).map(([name, props]) => 
+                    `<div>${props.emoji} ${props.description}</div>`
+                ).join('')}
+            </div>
+
+            <div class="sidebar-box">
+                <div style="font-size: 12px;">🪙 Coin / 💎 Diamond: shop currency</div>
+            </div>
+        `;
+    }
+
+    handleKeyDown(e) {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            this.showScreen('settings');
+            return;
+        }
+
+        if (this.uiState === 'mode_select') {
+            if (e.key === ' ' && this.selectedMode) {
+                this.startGame();
+            } else if (e.key === 'Escape') {
+                this.exitGame();
+            }
+        } else if (this.uiState === 'game') {
+            if (e.key === 'F11') {
+                // Toggle fullscreen
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            } else if (e.key === 'p' || e.key === 'P') {
+                this.togglePause();
+            } else if (e.key === 'r' || e.key === 'R') {
+                if (this.paused) {
+                    this.restartGame();
+                }
+            } else if (e.key === 'Escape') {
+                this.showScreen('mode_select');
+                this.started = false;
+            } else if (!this.paused && !this.gameOverScreen) {
+                // Snake movement
+                const direction = this.snake.direction;
+                
+                if ((e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') && direction.y !== 1) {
+                    this.snake.direction = new Vector2(0, -1);
+                } else if ((e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') && direction.y !== -1) {
+                    this.snake.direction = new Vector2(0, 1);
+                } else if ((e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') && direction.x !== -1) {
+                    this.snake.direction = new Vector2(1, 0);
+                } else if ((e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') && direction.x !== 1) {
+                    this.snake.direction = new Vector2(-1, 0);
+                }
+            } else if (this.gameOverScreen) {
+                if (e.key === ' ') {
+                    this.restartGame();
+                } else if (e.key === 'Escape') {
+                    this.showScreen('mode_select');
+                    this.started = false;
+                }
+            }
+        } else if (this.uiState.startsWith('shop_') || this.uiState === 'about') {
+            if (e.key === 'Escape') {
+                this.showScreen('mode_select');
+            }
+        }
+    }
+
+    handleCanvasClick(e) {
+        if (this.uiState !== 'game' || this.paused || this.gameOverScreen) return;
+
+        const rect = this.canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const head = this.snake.segments[0].pos;
+        const headX = head.x * CELL_SIZE;
+        const headY = head.y * CELL_SIZE;
+
+        // Determine direction based on click position relative to snake head
+        if (Math.abs(x - headX) > Math.abs(y - headY)) {
+            // Horizontal movement
+            if (x < headX && this.snake.direction.x !== 1) {
+                this.snake.direction = new Vector2(-1, 0);
+            } else if (x > headX + CELL_SIZE && this.snake.direction.x !== -1) {
+                this.snake.direction = new Vector2(1, 0);
+            }
+        } else {
+            // Vertical movement
+            if (y < headY && this.snake.direction.y !== 1) {
+                this.snake.direction = new Vector2(0, -1);
+            } else if (y > headY + CELL_SIZE && this.snake.direction.y !== -1) {
+                this.snake.direction = new Vector2(0, 1);
+            }
+        }
+    }
+
+    togglePause() {
+        this.paused = !this.paused;
+        
+        if (this.paused) {
+            document.getElementById('pauseOverlay').classList.remove('hidden');
+        } else {
+            document.getElementById('pauseOverlay').classList.add('hidden');
+        }
+    }
+
+    restartGameWithMode(mode) {
+        this.snake = new Snake();
+        this.foods = [];
+        this.powerups = [];
+        this.collectibles = [];
+        this.activePowerups = {};
+        this.powerupEndTimes = {};
+        this.score = 0;
+        this.particleEffects = [];
+        this.gameOverScreen = false;
+        this.paused = false;
+        this.spawnFood();
+        this.spawnCollectible();
+        this.started = true;
+        this.currentMode = mode;
+        this.gameSpeed = GAME_MODES[mode].speed_ms;
+
+        // Hide overlays
+        document.getElementById('gameOverOverlay').classList.add('hidden');
+        document.getElementById('pauseOverlay').classList.add('hidden');
+    }
+
+    restartGame() {
+        if (this.currentMode) {
+            this.restartGameWithMode(this.currentMode);
+        } else {
+            this.showScreen('mode_select');
+            this.started = false;
+        }
+    }
+
+    // ===== SPAWNING METHODS =====
+    spawnFood() {
+        const foodTypes = Object.keys(FOOD_TYPES);
+        const weights = foodTypes.map(type => FOOD_TYPES[type].weight);
+        const selectedType = this.weightedRandom(foodTypes, weights);
+        
+        const food = new Food(selectedType);
+        
+        // Ensure not colliding
+        let attempts = 0;
+        while (this.isPositionOccupied(food.pos) && attempts < 200) {
+            food.randomize();
+            attempts++;
+        }
+        
+        this.foods.push(food);
+    }
+
+    spawnPowerup() {
+        const powerTypes = Object.keys(POWERUP_TYPES);
+        const weights = powerTypes.map(type => POWERUP_TYPES[type].weight);
+        const selectedType = this.weightedRandom(powerTypes, weights);
+        
+        const powerup = new PowerUp(selectedType);
+        
+        // Ensure not colliding
+        let attempts = 0;
+        while (this.isPositionOccupied(powerup.pos) && attempts < 200) {
+            powerup.randomize();
+            attempts++;
+        }
+        
+        this.powerups.push(powerup);
+    }
+
+    spawnCollectible() {
+        const collectibleTypes = Object.keys(COLLECTIBLE_TYPES);
+        const weights = collectibleTypes.map(type => COLLECTIBLE_TYPES[type].weight);
+        const selectedType = this.weightedRandom(collectibleTypes, weights);
+        
+        const pos = this.getEmptyPosition();
+        this.collectibles.push({
+            type: selectedType,
+            pos: pos,
+            spawn: Date.now()
+        });
+    }
+
+    weightedRandom(items, weights) {
+        const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+        let random = Math.random() * totalWeight;
+        
+        for (let i = 0; i < items.length; i++) {
+            random -= weights[i];
+            if (random <= 0) {
+                return items[i];
+            }
+        }
+        
+        return items[items.length - 1];
+    }
+
+    isPositionOccupied(pos) {
+        // Check snake segments
+        for (const segment of this.snake.segments) {
+            if (segment.pos.equals(pos)) return true;
+        }
+        
+        // Check foods
+        for (const food of this.foods) {
+            if (food.pos.equals(pos)) return true;
+        }
+        
+        // Check powerups
+        for (const powerup of this.powerups) {
+            if (powerup.pos.equals(pos)) return true;
+        }
+        
+        // Check collectibles
+        for (const collectible of this.collectibles) {
+            if (collectible.pos.equals(pos)) return true;
+        }
+        
+        return false;
+    }
+
+    getEmptyPosition() {
+        for (let attempts = 0; attempts < 200; attempts++) {
+            const pos = new Vector2(
+                Math.floor(Math.random() * CELL_NUMBER_X),
+                Math.floor(Math.random() * CELL_NUMBER_Y)
+            );
+            
+            if (!this.isPositionOccupied(pos)) {
+                return pos;
+            }
+        }
+        
+        // Fallback to random position
+        return new Vector2(
+            Math.floor(Math.random() * CELL_NUMBER_X),
+            Math.floor(Math.random() * CELL_NUMBER_Y)
+        );
+    }
+
+    // ===== GAME LOGIC =====
+    updatePowerups() {
+        const now = Date.now();
+        const expired = [];
+        
+        for (const [key, endTime] of Object.entries(this.powerupEndTimes)) {
+            if (now >= endTime) {
+                expired.push(key);
+            }
+        }
+        
+        for (const key of expired) {
+            delete this.powerupEndTimes[key];
+            delete this.activePowerups[key];
+        }
+    }
+
+    activatePowerup(type) {
+        const now = Date.now();
+        const baseDuration = POWERUP_TYPES[type].duration;
+        const duration = this.upgradedDuration(baseDuration, type);
+        
+        this.activePowerups[type] = now;
+        this.powerupEndTimes[type] = now + duration;
+        
+        // Play specific powerup sound
+        this.playSound(type);
+        
+        if (type === 'shrink') {
+            this.snake.shrink(3);
+            const head = this.snake.segments[0].pos;
+            this.particleEffects.push(new ParticleEffect(
+                head.x * CELL_SIZE + CELL_SIZE / 2,
+                head.y * CELL_SIZE + CELL_SIZE / 2,
+                COLORS.BLUE,
+                20,
+                'sparkle'
+            ));
+        }
+    }
+
+    checkCollisions() {
+        const head = this.snake.segments[0].pos;
+
+        // Check food collisions
+        for (let i = this.foods.length - 1; i >= 0; i--) {
+            const food = this.foods[i];
+            if (food.pos.equals(head)) {
+                // Play eat sound
+                this.playSound('eat');
+                
+                let points = food.properties.points;
+                if (this.activePowerups.double_points) {
+                    points *= 2;
+                }
+                
+                this.score += points;
+                
+                // Play level up sound every 100 points
+                if (Math.floor(this.score / 100) > Math.floor((this.score - points) / 100)) {
+                    setTimeout(() => this.playSound('level_up'), 200);
+                }
+                
+                // Update high score
+                if (this.currentMode) {
+                    if (this.score > (this.highscores[this.currentMode] || 0)) {
+                        this.highscores[this.currentMode] = this.score;
+                        saveToStorage('highscores', this.highscores);
+                    }
+                }
+
+                // Particle effect
+                this.particleEffects.push(new ParticleEffect(
+                    food.pos.x * CELL_SIZE + CELL_SIZE / 2,
+                    food.pos.y * CELL_SIZE + CELL_SIZE / 2,
+                    food.properties.color,
+                    15
+                ));
+
+                this.foods.splice(i, 1);
+                this.snake.addBlock();
+                break;
+            }
+        }
+
+        // Check powerup collisions
+        for (let i = this.powerups.length - 1; i >= 0; i--) {
+            const powerup = this.powerups[i];
+            if (powerup.pos.equals(head)) {
+                this.activatePowerup(powerup.powerupType);
+                
+                // Particle effect
+                this.particleEffects.push(new ParticleEffect(
+                    powerup.pos.x * CELL_SIZE + CELL_SIZE / 2,
+                    powerup.pos.y * CELL_SIZE + CELL_SIZE / 2,
+                    powerup.properties.color,
+                    20,
+                    'sparkle'
+                ));
+
+                this.powerups.splice(i, 1);
+                break;
+            }
+        }
+
+        // Check collectible collisions
+        for (let i = this.collectibles.length - 1; i >= 0; i--) {
+            const collectible = this.collectibles[i];
+            if (collectible.pos.equals(head)) {
+                if (collectible.type === 'coin') {
+                    this.playSound('coin');
+                    this.wallet.coins += 1;
+                } else {
+                    this.playSound('diamond');
+                    this.wallet.diamonds += 1;
+                }
+
+                // Particle effect
+                this.particleEffects.push(new ParticleEffect(
+                    collectible.pos.x * CELL_SIZE + CELL_SIZE / 2,
+                    collectible.pos.y * CELL_SIZE + CELL_SIZE / 2,
+                    COLLECTIBLE_TYPES[collectible.type].color,
+                    18,
+                    'sparkle'
+                ));
+
+                this.collectibles.splice(i, 1);
+                saveToStorage('wallet', this.wallet);
+                break;
+            }
+        }
+    }
+
+    checkGameOver() {
+        const invincible = this.activePowerups.invincible;
+        const ghostMode = this.activePowerups.ghost_mode;
+        
+        if (!invincible && this.snake.checkCollision(ghostMode)) {
+            this.gameOverScreen = true;
+            
+            // Stop background music and play game over sound
+            this.stopSound('background');
+            this.playSound('game_over');
+            
+            const head = this.snake.segments[0].pos;
+            this.particleEffects.push(new ParticleEffect(
+                head.x * CELL_SIZE + CELL_SIZE / 2,
+                head.y * CELL_SIZE + CELL_SIZE / 2,
+                COLORS.RED,
+                25
+            ));
+
+            // Update high score one final time
+            if (this.currentMode) {
+                this.highscores[this.currentMode] = Math.max(
+                    this.highscores[this.currentMode] || 0,
+                    this.score
+                );
+                saveToStorage('highscores', this.highscores);
+            }
+
+            // Show game over overlay
+            this.showGameOverOverlay();
+        }
+    }
+
+    showGameOverOverlay() {
+        const overlay = document.getElementById('gameOverOverlay');
+        const finalScore = document.getElementById('finalScore');
+        const newHighScore = document.getElementById('newHighScore');
+        
+        finalScore.textContent = `Score: ${this.score}`;
+        
+        const isNewHighScore = this.currentMode && 
+            this.score === (this.highscores[this.currentMode] || 0) && 
+            this.score > 0;
+            
+        if (isNewHighScore) {
+            newHighScore.classList.remove('hidden');
+        } else {
+            newHighScore.classList.add('hidden');
+        }
+        
+        overlay.classList.remove('hidden');
+    }
+
+    // ===== GAME LOOP AND UPDATES =====
+    update() {
+        if (this.uiState !== 'game' || this.gameOverScreen || this.paused) {
+            return;
+        }
+
+        this.updatePowerups();
+        this.snake.moveSnake();
+        this.checkCollisions();
+        this.checkGameOver();
+
+        const now = Date.now();
+
+        // Spawn items
+        if (this.foods.length < 3 && now - this.lastFoodSpawn > 2000) {
+            this.spawnFood();
+            this.lastFoodSpawn = now;
+        }
+
+        if (this.powerups.length < 2 && now - this.lastPowerupSpawn > 10000) {
+            this.spawnPowerup();
+            this.lastPowerupSpawn = now;
+        }
+
+        if (this.collectibles.length < 3 && now - this.lastCollectibleSpawn > 6000) {
+            this.spawnCollectible();
+            this.lastCollectibleSpawn = now;
+        }
+
+        // Remove expired collectibles
+        this.collectibles = this.collectibles.filter(c => now - c.spawn < 20000);
+
+        // Remove expired powerups
+        this.powerups = this.powerups.filter(p => !p.isExpired());
+
+        // Update particle effects
+        this.particleEffects = this.particleEffects.filter(effect => effect.updateAndDraw(this.ctx));
+
+        this.updateUI();
+    }
+
+    // ===== RENDERING METHODS =====
+    drawGrid() {
+        for (let x = 0; x < CELL_NUMBER_X; x++) {
+            for (let y = 0; y < CELL_NUMBER_Y; y++) {
+                const color = (x + y) % 2 === 0 ? GRID_COLORS.A : GRID_COLORS.B;
+                this.ctx.fillStyle = color;
+                this.ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            }
+        }
+    }
+
+    drawRoundedRect(x, y, width, height, radius, fillColor, strokeColor = null, strokeWidth = 0) {
+        this.ctx.beginPath();
+        this.ctx.roundRect(x, y, width, height, radius);
+        this.ctx.fillStyle = fillColor;
+        this.ctx.fill();
+        
+        if (strokeColor && strokeWidth > 0) {
+            this.ctx.strokeStyle = strokeColor;
+            this.ctx.lineWidth = strokeWidth;
+            this.ctx.stroke();
+        }
+    }
+
+    drawSnake() {
+        const isGhost = this.activePowerups.ghost_mode;
+        this.ctx.globalAlpha = isGhost ? 0.5 : 1;
+
+        for (let i = 0; i < this.snake.segments.length; i++) {
+            const segment = this.snake.segments[i];
+            const x = segment.pos.x * CELL_SIZE;
+            const y = segment.pos.y * CELL_SIZE;
+
+            if (segment.isHead) {
+                // Draw head
+                this.drawRoundedRect(
+                    x, y, CELL_SIZE, CELL_SIZE,
+                    CELL_SIZE * 0.45,
+                    SNAKE_COLORS.HEAD,
+                    SNAKE_COLORS.OUTLINE,
+                    2
+                );
+
+                // Draw eyes
+                const eyeSize = CELL_SIZE / 7;
+                const eyeOffset = CELL_SIZE / 5;
+                const centerX = x + CELL_SIZE / 2;
+                const centerY = y + CELL_SIZE / 2;
+
+                // Determine eye positions based on direction
+                let eye1X, eye1Y, eye2X, eye2Y;
+                const direction = this.snake.direction;
+
+                if (direction.x > 0) { // Moving right
+                    eye1X = centerX + eyeOffset;
+                    eye1Y = centerY - eyeOffset;
+                    eye2X = centerX + eyeOffset;
+                    eye2Y = centerY + eyeOffset;
+                } else if (direction.x < 0) { // Moving left
+                    eye1X = centerX - eyeOffset;
+                    eye1Y = centerY - eyeOffset;
+                    eye2X = centerX - eyeOffset;
+                    eye2Y = centerY + eyeOffset;
+                } else if (direction.y < 0) { // Moving up
+                    eye1X = centerX - eyeOffset;
+                    eye1Y = centerY - eyeOffset;
+                    eye2X = centerX + eyeOffset;
+                    eye2Y = centerY - eyeOffset;
+                } else { // Moving down
+                    eye1X = centerX - eyeOffset;
+                    eye1Y = centerY + eyeOffset;
+                    eye2X = centerX + eyeOffset;
+                    eye2Y = centerY + eyeOffset;
+                }
+
+                // Draw eyes
+                this.ctx.fillStyle = SNAKE_COLORS.EYE_WHITE;
+                this.ctx.beginPath();
+                this.ctx.arc(eye1X, eye1Y, eyeSize, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.beginPath();
+                this.ctx.arc(eye2X, eye2Y, eyeSize, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Draw pupils
+                this.ctx.fillStyle = SNAKE_COLORS.EYE_BLACK;
+                this.ctx.beginPath();
+                this.ctx.arc(eye1X, eye1Y, eyeSize * 0.6, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.beginPath();
+                this.ctx.arc(eye2X, eye2Y, eyeSize * 0.6, 0, Math.PI * 2);
+                this.ctx.fill();
+            } else {
+                // Draw body
+                this.drawRoundedRect(
+                    x, y, CELL_SIZE, CELL_SIZE,
+                    CELL_SIZE * 0.45,
+                    SNAKE_COLORS.BODY,
+                    SNAKE_COLORS.OUTLINE,
+                    2
+                );
+
+                // Draw belly
+                const bellyWidth = CELL_SIZE * 0.42;
+                const bellyX = x + (CELL_SIZE - bellyWidth) / 2;
+                const bellyY = y + CELL_SIZE * 0.25;
+                const bellyHeight = CELL_SIZE * 0.5;
+
+                this.ctx.fillStyle = SNAKE_COLORS.BELLY + '5A'; // Add some transparency
+                this.ctx.beginPath();
+                this.ctx.roundRect(bellyX, bellyY, bellyWidth, bellyHeight, CELL_SIZE * 0.22);
+                this.ctx.fill();
+            }
+        }
+
+        this.ctx.globalAlpha = 1;
+    }
+
+    drawFood() {
+        for (const food of this.foods) {
+            const x = food.pos.x * CELL_SIZE;
+            const y = food.pos.y * CELL_SIZE;
+
+            // Draw shadow
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            this.ctx.beginPath();
+            this.ctx.ellipse(x + CELL_SIZE/2 + 3, y + CELL_SIZE/2 + 3, 
+                           CELL_SIZE/2 - 3, CELL_SIZE/2 - 3, 0, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            // Draw food emoji
+            this.ctx.font = `${CELL_SIZE * 0.8}px Arial`;
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(
+                food.properties.emoji,
+                x + CELL_SIZE / 2,
+                y + CELL_SIZE / 2
+            );
+        }
+    }
+
+    drawPowerups() {
+        for (const powerup of this.powerups) {
+            const x = powerup.pos.x * CELL_SIZE;
+            const y = powerup.pos.y * CELL_SIZE;
+
+            // Draw glow effect
+            this.ctx.fillStyle = powerup.properties.color + '33';
+            this.ctx.beginPath();
+            this.ctx.ellipse(x + CELL_SIZE/2, y + CELL_SIZE/2, 
+                           CELL_SIZE/2 + 2, CELL_SIZE/2 + 2, 0, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            // Draw powerup background
+            this.ctx.fillStyle = powerup.properties.color;
+            this.ctx.beginPath();
+            this.ctx.ellipse(x + CELL_SIZE/2, y + CELL_SIZE/2, 
+                           CELL_SIZE/2, CELL_SIZE/2, 0, 0, Math.PI * 2);
+            this.ctx.fill();
+
+            // Draw powerup emoji
+            this.ctx.font = `${CELL_SIZE * 0.7}px Arial`;
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillStyle = COLORS.WHITE;
+            this.ctx.fillText(
+                powerup.properties.emoji,
+                x + CELL_SIZE / 2,
+                y + CELL_SIZE / 2
+            );
+        }
+    }
+
+    drawCollectibles() {
+        for (const collectible of this.collectibles) {
+            const x = collectible.pos.x * CELL_SIZE;
+            const y = collectible.pos.y * CELL_SIZE;
+
+            // Draw border
+            this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+            this.ctx.lineWidth = 1;
+            this.ctx.beginPath();
+            this.ctx.ellipse(x + CELL_SIZE/2, y + CELL_SIZE/2, 
+                           CELL_SIZE/2 - 4, CELL_SIZE/2 - 4, 0, 0, Math.PI * 2);
+            this.ctx.stroke();
+
+            // Draw collectible emoji
+            this.ctx.font = `${CELL_SIZE * 0.9}px Arial`;
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillStyle = COLLECTIBLE_TYPES[collectible.type].color;
+            this.ctx.fillText(
+                COLLECTIBLE_TYPES[collectible.type].emoji,
+                x + CELL_SIZE / 2,
+                y + CELL_SIZE / 2
+            );
+        }
+    }
+
+    render() {
+        if (this.uiState !== 'game') return;
+
+        // Clear canvas
+        this.ctx.fillStyle = COLORS.BACKGROUND;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        if (!this.gameOverScreen) {
+            this.drawGrid();
+            this.drawFood();
+            this.drawPowerups();
+            this.drawCollectibles();
+            this.drawSnake();
+        }
+
+        // Update particle effects
+        for (const effect of this.particleEffects) {
+            effect.updateAndDraw(this.ctx);
+        }
+
+        // Draw border
+        this.ctx.strokeStyle = COLORS.GOLD;
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    gameLoop() {
+        const now = Date.now();
+        
+        // Calculate game speed
+        let currentSpeed = this.gameSpeed;
+        if (this.activePowerups.speed_boost) {
+            currentSpeed = Math.floor(currentSpeed * 0.6);
+        }
+
+        // Update game logic at appropriate intervals
+        if (now - this.lastUpdateTime >= currentSpeed) {
+            this.update();
+            this.lastUpdateTime = now;
+        }
+
+        // Render at 60 FPS
+        this.render();
+
+        requestAnimationFrame(() => this.gameLoop());
+    }
+}
+
+// Initialize game when page loads
+let game;
+window.addEventListener('load', () => {
+    game = new Game();
+    
+    // Initialize audio on first user interaction
+    game.initializeAudioOnUserInteraction();
+});
+
+// Add roundRect polyfill for older browsers
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+        if (width < 2 * radius) radius = width / 2;
+        if (height < 2 * radius) radius = height / 2;
+        this.beginPath();
+        this.moveTo(x + radius, y);
+        this.arcTo(x + width, y, x + width, y + height, radius);
+        this.arcTo(x + width, y + height, x, y + height, radius);
+        this.arcTo(x, y + height, x, y, radius);
+        this.arcTo(x, y, x + width, y, radius);
+        this.closePath();
+        return this;
+    };
+}
+
+
+    </script>
+</body>
+</html>
