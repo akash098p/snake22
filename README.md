@@ -31,7 +31,7 @@ A modern, feature-rich Snake Game built using HTML, CSS, and JavaScript, enhance
 
 ### 💻 Live Preview 
 
-  https://akash098p.github.io/SERPENT-SnakeGame/
+##### https://akash098p.github.io/SERPENT-SnakeGame/
 ---
 ### 💎 Economy System
 - 🪙 Coins & 💎 Diamonds collected during gameplay  
