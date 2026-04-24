@@ -1,12 +1,12 @@
-## 🐍 Snake Game+
+# 🐍 Snake Game+
 Modes • Shop • Coins • Diamonds • Power-Ups • Skins • Themes
 
   A modern, feature-rich Snake Game built using HTML, CSS, and JavaScript, enhanced with shop systems, power-ups, particle effects, and persistent storage.
 
-## 🚀 Features
-# 🎮 Gameplay
-  Classic Snake mechanics with smooth controls
-  Multiple difficulty modes:
+# 🚀 Features
+## 🎮 Gameplay
+ • Classic Snake mechanics with smooth controls
+ • Multiple difficulty modes:
     Easy
     Medium
     Hard
