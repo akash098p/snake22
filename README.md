@@ -24,7 +24,7 @@ A modern, feature-rich Snake Game built using HTML, CSS, and JavaScript, enhance
 ---
 ### 📷 Screenshots
 
-![Serpent](https://i.postimg.cc/qMjrFYQc/snake1.png)
+![Serpent](https://i.postimg.cc/Dy2FBFQv/snake1.png)
 ![Serpent](https://i.postimg.cc/Dy2FBFQv/snake2.png)
 
 ---
