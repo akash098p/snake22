@@ -4,58 +4,58 @@ Modes • Shop • Coins • Diamonds • Power-Ups • Skins • Themes
   A modern, feature-rich Snake Game built using HTML, CSS, and JavaScript, enhanced with shop systems, power-ups, particle effects, and persistent storage.
 
 ## 🚀 Features
-🎮 Gameplay
+# 🎮 Gameplay
   Classic Snake mechanics with smooth controls
-Multiple difficulty modes:
-Easy
-Medium
-Hard
-Dynamic food system with different point values
-Smart spawning system (no overlap issues)
-💎 Economy System
-🪙 Coins & 💎 Diamonds collected during gameplay
-Persistent wallet using localStorage
-Spend currency in the shop
-🛒 Shop System
-🎨 Themes (change background & grid)
-🐍 Snake Skins (custom colors & styles)
-⚡ Boost Upgrades (increase power-up duration)
-Unlockable & purchasable items
-⚡ Power-Ups
-⚡ Speed Boost
-🛡️ Invincibility
-💎 Double Points
-👻 Ghost Mode
-🔵 Shrink Snake
-🧲 Magnet
+  Multiple difficulty modes:
+    Easy
+    Medium
+    Hard
+  Dynamic food system with different point values
+  Smart spawning system (no overlap issues)
+## 💎 Economy System
+  🪙 Coins & 💎 Diamonds collected during gameplay
+  Persistent wallet using localStorage
+  Spend currency in the shop
+## 🛒 Shop System
+  🎨 Themes (change background & grid)
+  🐍 Snake Skins (custom colors & styles)
+  ⚡ Boost Upgrades (increase power-up duration)
+  Unlockable & purchasable items
+## ⚡ Power-Ups
+  ⚡ Speed Boost
+  🛡️ Invincibility
+  💎 Double Points
+  👻 Ghost Mode
+  🔵 Shrink Snake
+  🧲 Magnet
 
-Each power-up includes:
+# Each power-up includes:
 
 Visual effects
 Custom duration (upgradeable)
 Unique gameplay impact
-🎨 Visual Effects
-Particle explosions & sparkles
-Animated food & collectibles
-Smooth grid rendering
-Responsive UI
-🔊 Audio System
-Background music & menu music
-Sound effects:
-Eat
-Coin / Diamond
-Power-ups
-Game Over
-Auto audio initialization (browser-safe)
-💾 Data Persistence
-High scores per mode
-Player wallet (coins & diamonds)
-Purchased skins/themes
-Settings (volume)
+## 🎨 Visual Effects
+  Particle explosions & sparkles
+  Animated food & collectibles
+  Smooth grid rendering
+  Responsive UI
+## 🔊 Audio System
+  Background music & menu music
+  Sound effects:
+    Eat
+    Coin / Diamond
+    Power-ups
+    Game Over
+  Auto audio initialization (browser-safe)
+## 💾 Data Persistence
+  High scores per mode
+  Player wallet (coins & diamonds)
+  Purchased skins/themes
+  Settings (volume)
 
-All saved using localStorage.
+  All saved using localStorage.
 
-🧠 Smart UI System
+## 🧠 Smart UI System
 Mode selection screen
 Shop screens (Themes, Skins, Boosts)
 Settings panel
