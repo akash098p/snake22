@@ -24,14 +24,15 @@ A modern, feature-rich Snake Game built using HTML, CSS, and JavaScript, enhance
 ---
 ### 📷 Screenshots
 
-![Serpent](https://i.postimg.cc/Dy2FBFQv/snake1.png)
-![Serpent](https://i.postimg.cc/Dy2FBFQv/snake2.png)
+![Serpent1](https://i.postimg.cc/Dy2FBFQv/snake1.png)
+
+![Serpent2](https://i.postimg.cc/qMjrFYQc/snake2.png)
 
 ---
 
 ### 💻 Live Preview 
 
-##### https://akash098p.github.io/SERPENT-SnakeGame/
+#### https://akash098p.github.io/SERPENT-SnakeGame/
 ---
 ### 💎 Economy System
 - 🪙 Coins & 💎 Diamonds collected during gameplay  
