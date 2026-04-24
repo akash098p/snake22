@@ -22,7 +22,16 @@ A modern, feature-rich Snake Game built using HTML, CSS, and JavaScript, enhance
 - Smart spawning system (no overlap issues)  
 
 ---
+### 📷 Screenshots
 
+![Serpent](https://i.postimg.cc/qMjrFYQc/snake1.png)
+![Serpent](https://i.postimg.cc/Dy2FBFQv/snake2.png)
+
+---
+
+### 💻 Live Preview 
+
+---
 ### 💎 Economy System
 - 🪙 Coins & 💎 Diamonds collected during gameplay  
 - Persistent wallet using localStorage  
